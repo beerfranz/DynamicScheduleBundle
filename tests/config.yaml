@@ -1,0 +1,97 @@
+imports:
+  - { resource: ../src/Resources/config/services.yaml }
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  Beerfranz\DynamicScheduleBundle\Tests\Functional\:
+    resource: '../tests/Functional/*'
+
+  Beerfranz\DynamicScheduleBundle\Tests\Message\:
+    resource: '../tests/Message/*'
+
+  SimpleScheduleProvider:
+    class: Beerfranz\DynamicScheduleBundle\Service\DynamicScheduleProvider
+    arguments:
+      $scheduleName: 'test_schedule'
+      $cache: '@scheduler.cache'
+      $lockFactory: '@lock.scheduler.factory'
+    tags:
+      - scheduler.schedule_provider: { name: 'dynamic' }
+
+  FarAwayScheduleProvider:
+    class: Beerfranz\DynamicScheduleBundle\Service\DynamicScheduleProvider
+    arguments:
+      $scheduleName: 'test_schedule_far_away'
+      $cache: '@scheduler.cache'
+      $lockFactory: '@lock.scheduler.factory'
+    tags:
+      - scheduler.schedule_provider: { name: 'far_away' }
+
+  EmptyDynamicScheduleProvider:
+    class: Beerfranz\DynamicScheduleBundle\Service\DynamicScheduleProvider
+    arguments:
+      $scheduleName: 'test_schedule_empty'
+      $cache: '@scheduler.cache'
+      $lockFactory: '@lock.scheduler.factory'
+    tags:
+      - scheduler.schedule_provider: { name: 'empty' }
+
+  BadTransportScheduleProvider:
+    class: Beerfranz\DynamicScheduleBundle\Service\DynamicScheduleProvider
+    arguments:
+      $scheduleName: 'bad_transport'
+      $cache: '@scheduler.cache'
+      $lockFactory: '@lock.scheduler.factory'
+    tags:
+      - scheduler.schedule_provider: { name: 'bad_transport' }
+
+  NoMissScheduleProvider:
+    class: Beerfranz\DynamicScheduleBundle\Service\DynamicScheduleProvider
+    arguments:
+      $scheduleName: 'test_other_schedule'
+      $onlyLastMissedRun: false
+    tags:
+      - scheduler.schedule_provider: { name: 'no_miss' }
+
+framework:
+  secret: test
+  test: true
+  scheduler:
+    enabled: true
+  cache:
+    pools:
+      scheduler.cache:
+        adapter: cache.adapter.doctrine_dbal
+        provider: doctrine.dbal.default_connection
+  lock:
+    resources:
+      scheduler: '%env(LOCK_DSN)%'
+  messenger:
+    transports:
+      async: test://
+      sync: test://
+      far_away: test://
+      other: test://
+
+doctrine:
+    dbal:
+        url: 'postgresql://dynamic-schedule:!ChangeMe!@database:5432/dynamic-schedule?serverVersion=16&charset=utf8'
+        profiling_collect_backtrace: '%kernel.debug%'
+        use_savepoints: true
+    orm:
+        enable_lazy_ghost_objects: true
+        report_fields_where_declared: true
+        validate_xml_mapping: true
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+            DynamicScheduleBundle:
+                is_bundle: true
+                type: attribute
+                dir: 'src/Entity'
+                prefix: 'Beerfranz\DynamicScheduleBundle\Entity'
+                alias: DynamicScheduleBundle

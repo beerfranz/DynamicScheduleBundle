@@ -1,0 +1,19 @@
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  # Beerfranz\DynamicScheduleBundle\Service\DynamicScheduleProvider:
+  #   class: Beerfranz\DynamicScheduleBundle\Service\DynamicScheduleProvider
+  #   arguments:
+  #     $taskRepository: '@Beerfranz\DynamicScheduleBundle\Repository\TaskRepository'
+  #     $scheduleName: 'dynamic'
+  #   tags:
+  #     - scheduler.schedule_provider: { name: 'dynamic' }
+
+
+  Beerfranz\DynamicScheduleBundle\Repository\TaskRepository:
+    class: Beerfranz\DynamicScheduleBundle\Repository\TaskRepository
+    arguments:
+      $registry: '@doctrine'

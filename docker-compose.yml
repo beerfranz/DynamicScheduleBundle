@@ -1,0 +1,41 @@
+services:
+  php:
+    profiles: ['php']
+    image: dynamic-schedule:local
+    build:
+      context: .
+    volumes:
+      - .:/app
+    environment:
+      LOCK_DSN: pgsql://dynamic-schedule:!ChangeMe!@database:5432/dynamic-schedule?serverVersion=${POSTGRES_VERSION:-16}&charset=${POSTGRES_CHARSET:-utf8}
+      SHELL_VERBOSITY: INFO
+    networks:
+      - local
+
+  database:
+    profiles: ['db']
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    environment:
+      - POSTGRES_DB=dynamic-schedule
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-!ChangeMe!}
+      - POSTGRES_USER=${POSTGRES_USER:-dynamic-schedule}
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+    networks:
+      - local
+
+  adminer:
+    profiles: ['db']
+    image: adminer:4.8.1-standalone
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=database
+    networks:
+      - local
+
+networks:
+  local:
+    external: true

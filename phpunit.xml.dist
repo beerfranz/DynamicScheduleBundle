@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit>
+    <php>
+        <server name="KERNEL_CLASS" value="Beerfranz\DynamicScheduleBundle\Tests\TestKernel" />
+    </php>
+    <testsuites>
+        <testsuite name="Functional">
+            <directory>tests/Functional</directory>
+        </testsuite>
+    </testsuites>
+    <extensions>
+        <extension class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
+    </extensions>
+</phpunit>
