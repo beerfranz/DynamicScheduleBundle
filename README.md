@@ -1,4 +1,5 @@
 # DynamicScheduleBundle
+
 Manage dynamic schedule tasks
 
 This bundle just add a storage layer using Doctrine to manage schedule tasks.
@@ -17,20 +18,19 @@ Add in your `service.yaml`:
 
 ```
 services:
-  MyScheduleProvider:
+  dynamic.schedule.provider:
     class: Beerfranz\DynamicScheduleBundle\Service\DynamicScheduleProvider
     arguments:
-      $scheduleName: 'my'
+      $scheduleName: '<name>'
     tags:
-      - scheduler.schedule_provider: { name: 'my' }
+      - scheduler.schedule_provider: { name: '<schedule_name>' }
 ```
 
 ### Consume your scheduler
 
 ```
-php bin/console messenger:consume scheduler_<name>
+php bin/console messenger:consume scheduler_<schedule_name>
 ```
-
 
 ## Bootstrap
 
